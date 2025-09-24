@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlavorHub - Food Ordering System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b35, #f7931e, #ffab00);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Student Info Banner */
+        .student-info {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .student-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .student-item {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .student-name {
+            color: #f39c12;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .student-id {
+            color: #2ecc71;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(255, 107, 53, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid #ff6b35;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #ff6b35;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+        }
+
+        .toggle-btn {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        .toggle-btn.admin {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+        }
+
+        .toggle-btn.admin:hover {
+            box-shadow: 0 8px 25px rgba(44, 62, 80, 0.4);
+        }
+
+        /* Cart Icon */
+        .cart-icon {
+            position: relative;
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1.1rem;
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.5);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        .content-section {
+            background: rgba(255, 255, 255, 0.95);
+            margin: 40px 0;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #ff6b35;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* Customer View */
+        .customer-view {
+            display: block;
+        }
+
+        .admin-view {
+            display: none;
+        }
+
+        .admin-view.active {
+            display: block;
+        }
+
+        .customer-view.hidden {
+            display: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+            color: white;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.8), rgba(247, 147, 30, 0.8));
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        /* Menu Grid */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(255, 107, 53, 0.2);
+            border-color: #ff6b35;
+        }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            position: relative;
+        }
+
+        .item-info {
+            padding: 25px;
+        }
+
+        .item-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .item-description {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .item-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .quantity-btn {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: #e55a2b;
+            transform: scale(1.1);
+        }
+
+        .quantity-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+            background: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 10px;
+            border: 2px solid #ff6b35;
+        }
+
+        .add-to-cart {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .add-to-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Cart Modal */
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .cart-modal.show {
+            display: flex;
+        }
+
+        .cart-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ff6b35;
+        }
+
+        .close-cart {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .remove-item {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .cart-total {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #ff6b35;
+        }
+
+        .checkout-btn {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+        }
+
+        /* Admin Dashboard */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .stat-card.green {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+
+        .stat-card.purple {
+            background: linear-gradient(135deg, #8e44ad, #7d3c98);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Orders List */
+        .orders-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .order-card {
+            border: 3px solid #27ae60;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            background: #eafaf1;
+            transition: all 0.3s ease;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .order-id {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .order-timestamp {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .order-details {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .order-items {
+            list-style: none;
+            margin-bottom: 15px;
+        }
+
+        .order-items li {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-total {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: right;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #27ae60;
+        }
+
+        /* Sales Analytics */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .analytics-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .analytics-title {
+            font-size: 1.5rem;
+            color: #ff6b35;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .popular-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .popular-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .student-details {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .student-item {
+                font-size: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Student Info Banner -->
+    <div class="student-info">
+        <div class="container">
+            <div class="student-details">
+                <div class="student-item">
+                    <span>Student:</span> 
+                    <span class="student-name">Moontasir bin Shahed</span>
+                </div>
+                <div class="student-item">
+                    <span>Student ID:</span> 
+                    <span class="student-id">K232034</span>
+                </div>
+                <div style="font-size: 1rem; color: #bdc3c7;">
+                    <span>Food Ordering System Project</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    FlavorHub
+                </div>
+                <div class="nav-actions">
+                    <div class="view-toggle">
+                        <button class="toggle-btn" onclick="showCustomerView()">
+                            Customer View
+                        </button>
+                        <button class="toggle-btn admin" onclick="showAdminView()">
+                            Admin Panel
+                        </button>
+                    </div>
+                    <button class="cart-icon" onclick="toggleCart()">
+                        Cart
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Customer View -->
+    <div id="customerView" class="customer-view">
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="container">
+                <h1>Delicious Food, Delivered Fast!</h1>
+                <p>Experience the finest cuisine with our advanced ordering system</p>
+            </div>
+        </section>
+
+        <!-- Menu Section -->
+        <section class="content-section" id="menu">
+            <div class="container">
+                <h2 class="section-title">Our Menu</h2>
+                <div class="menu-grid">
+                    <div class="menu-item">
+                        <div class="item-image">
+                            <span>🍕</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Margherita Pizza</div>
+                            <div class="item-description">Fresh tomatoes, mozzarella, basil, olive oil on crispy crust</div>
+                            <div class="item-price">$18.99</div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="changeQuantity(1, -1)">-</button>
+                                <span class="quantity-display" id="qty-1">1</span>
+                                <button class="quantity-btn" onclick="changeQuantity(1, 1)">+</button>
+                            </div>
+                            <button class="add-to-cart" onclick="addToCart(1, 'Margherita Pizza', 18.99)">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="item-image">
+                            <span>🍔</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Classic Cheeseburger</div>
+                            <div class="item-description">Juicy beef patty with cheese, lettuce, tomato, and special sauce</div>
+                            <div class="item-price">$15.49</div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="changeQuantity(2, -1)">-</button>
+                                <span class="quantity-display" id="qty-2">1</span>
+                                <button class="quantity-btn" onclick="changeQuantity(2, 1)">+</button>
+                            </div>
+                            <button class="add-to-cart" onclick="addToCart(2, 'Classic Cheeseburger', 15.49)">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="item-image">
+                            <span>🍝</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Spaghetti Carbonara</div>
+                            <div class="item-description">Creamy pasta with bacon, eggs, parmesan, and black pepper</div>
+                            <div class="item-price">$16.99</div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="changeQuantity(3, -1)">-</button>
+                                <span class="quantity-display" id="qty-3">1</span>
+                                <button class="quantity-btn" onclick="changeQuantity(3, 1)">+</button>
+                            </div>
+                            <button class="add-to-cart" onclick="addToCart(3, 'Spaghetti Carbonara', 16.99)">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="item-image">
+                            <span>🍰</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Chocolate Lava Cake</div>
+                            <div class="item-description">Warm chocolate cake with molten center, served with vanilla ice cream</div>
+                            <div class="item-price">$8.99</div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="changeQuantity(4, -1)">-</button>
+                                <span class="quantity-display" id="qty-4">1</span>
+                                <button class="quantity-btn" onclick="changeQuantity(4, 1)">+</button>
+                            </div>
+                            <button class="add-to-cart" onclick="addToCart(4, 'Chocolate Lava Cake', 8.99)">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="item-image">
+                            <span>🥤</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Fresh Orange Juice</div>
+                            <div class="item-description">Freshly squeezed orange juice, rich in vitamin C</div>
+                            <div class="item-price">$4.99</div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="changeQuantity(5, -1)">-</button>
+                                <span class="quantity-display" id="qty-5">1</span>
+                                <button class="quantity-btn" onclick="changeQuantity(5, 1)">+</button>
+                            </div>
+                            <button class="add-to-cart" onclick="addToCart(5, 'Fresh Orange Juice', 4.99)">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="item-image">
+                            <span>🍕</span>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Pepperoni Pizza</div>
+                            <div class="item-description">Classic pepperoni with mozzarella cheese and tomato sauce</div>
+                            <div class="item-price">$21.99</div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="changeQuantity(6, -1)">-</button>
+                                <span class="quantity-display" id="qty-6">1</span>
+                                <button class="quantity-btn" onclick="changeQuantity(6, 1)">+</button>
+                            </div>
+                            <button class="add-to-cart" onclick="addToCart(6, 'Pepperoni Pizza', 21.99)">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Admin View -->
+    <div id="adminView" class="admin-view">
+        <!-- Dashboard Stats -->
+        <section class="content-section">
+            <div class="container">
+                <h2 class="section-title">Restaurant Admin Dashboard</h2>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-number" id="totalOrders">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                    <div class="stat-card orange">
+                        <div class="stat-icon">🍽️</div>
+                        <div class="stat-number" id="totalItems">0</div>
+                        <div class="stat-label">Items Sold</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-number" id="dailySales">$0.00</div>
+                        <div class="stat-label">Today's Sales</div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number" id="avgOrder">$0.00</div>
+                        <div class="stat-label">Average Order</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Orders Management -->
+        <section class="content-section">
+            <div class="container">
+                <h2 class="section-title">Customer Orders</h2>
+                <div class="orders-list" id="ordersList">
+                    <div style="text-align: center; color: #666; padding: 50px;">
+                        <h3>No orders yet</h3>
+                        <p>Orders will appear here when customers place them</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sales Analytics -->
+        <section class="content-section">
+            <div class="container">
+                <h2 class="section-title">Sales Analytics</h2>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <div class="analytics-title">Popular Items</div>
+                        <div id="popularItems">
+                            <div style="text-align: center; color: #666; padding: 20px;">
+                                No sales data yet
+                            </div>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-title">Sales Summary</div>
+                        <div id="salesSummary">
+                            <div class="popular-item">
+                                <span>Orders Today:</span>
+                                <span id="ordersToday">0</span>
+                            </div>
+                            <div class="popular-item">
+                                <span>Revenue Today:</span>
+                                <span id="revenueToday">$0.00</span>
+                            </div>
+                            <div class="popular-item">
+                                <span>Best Selling Hour:</span>
+                                <span id="bestHour">--:--</span>
+                            </div>
+                            <div class="popular-item">
+                                <span>Average Order Value:</span>
+                                <span id="avgOrderValue">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>Your Cart</h2>
+                <button class="close-cart" onclick="toggleCart()">×</button>
+            </div>
+            <div id="cartItems">
+                <div style="text-align: center; color: #666; padding: 20px;">
+                    Your cart is empty
+                </div>
+            </div>
+            <div class="cart-total">
+                <h3>Total: $<span id="cartTotal">0.00</span></h3>
+                <button class="checkout-btn" onclick="checkout()">
+                    Place Order
+                </button>
+            </div>
+            <div class="success-message" id="orderSuccess">
+                <h3>Order placed successfully!</h3>
+                <p>Your order will be prepared and delivered soon.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let cart = [];
+        let quantities = {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1};
+        let orders = [];
+        let orderCounter = 1;
+        let salesData = {
+            totalOrders: 0,
+            totalItems: 0,
+            dailySales: 0,
+            popularItems: {}
+        };
+
+        // Menu items data
+        const menuItems = {
+            1: {name: 'Margherita Pizza', price: 18.99, emoji: '🍕'},
+            2: {name: 'Classic Cheeseburger', price: 15.49, emoji: '🍔'},
+            3: {name: 'Spaghetti Carbonara', price: 16.99, emoji: '🍝'},
+            4: {name: 'Chocolate Lava Cake', price: 8.99, emoji: '🍰'},
+            5: {name: 'Fresh Orange Juice', price: 4.99, emoji: '🥤'},
+            6: {name: 'Pepperoni Pizza', price: 21.99, emoji: '🍕'}
+        };
+
+        // View switching functions
+        function showCustomerView() {
+            document.getElementById('customerView').classList.remove('hidden');
+            document.getElementById('customerView').style.display = 'block';
+            document.getElementById('adminView').classList.remove('active');
+            document.getElementById('adminView').style.display = 'none';
+        }
+
+        function showAdminView() {
+            document.getElementById('customerView').classList.add('hidden');
+            document.getElementById('customerView').style.display = 'none';
+            document.getElementById('adminView').classList.add('active');
+            document.getElementById('adminView').style.display = 'block';
+            updateAdminDashboard();
+        }
+
+        // Quantity control functions
+        function changeQuantity(itemId, change) {
+            const currentQty = quantities[itemId];
+            const newQty = Math.max(1, currentQty + change);
+            quantities[itemId] = newQty;
+            document.getElementById(`qty-${itemId}`).textContent = newQty;
+        }
+
+        // Cart functions
+        function addToCart(itemId, itemName, itemPrice) {
+            const quantity = quantities[itemId];
+            const existingItem = cart.find(item => item.id === itemId);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    id: itemId,
+                    name: itemName,
+                    price: itemPrice,
+                    quantity: quantity,
+                    emoji: menuItems[itemId].emoji
+                });
+            }
+            
+            updateCartDisplay();
+            showCartNotification();
+        }
+
+        function removeFromCart(itemId) {
+            cart = cart.filter(item => item.id !== itemId);
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            cartCount.textContent = totalItems;
+            cartTotal.textContent = totalPrice.toFixed(2);
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div style="text-align: center; color: #666; padding: 20px;">
+                        Your cart is empty
+                    </div>
+                `;
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.emoji} ${item.name}</div>
+                            <div class="cart-item-price">${item.price.toFixed(2)} x ${item.quantity}</div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <span style="font-weight: bold; margin-right: 10px;">${(item.price * item.quantity).toFixed(2)}</span>
+                            <button class="remove-item" onclick="removeFromCart(${item.id})">Remove</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function toggleCart() {
+            const cartModal = document.getElementById('cartModal');
+            cartModal.classList.toggle('show');
+        }
+
+        function showCartNotification() {
+            // Simple visual feedback - could enhance this
+            const cartIcon = document.querySelector('.cart-icon');
+            cartIcon.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                cartIcon.style.transform = 'scale(1.05)';
+            }, 200);
+        }
+
+        // Checkout function
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+
+            const order = {
+                id: orderCounter++,
+                timestamp: new Date(),
+                items: [...cart],
+                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                status: 'Confirmed'
+            };
+
+            orders.push(order);
+            
+            // Update sales data
+            salesData.totalOrders++;
+            salesData.totalItems += cart.reduce((sum, item) => sum + item.quantity, 0);
+            salesData.dailySales += order.total;
+            
+            // Update popular items
+            cart.forEach(item => {
+                if (salesData.popularItems[item.name]) {
+                    salesData.popularItems[item.name] += item.quantity;
+                } else {
+                    salesData.popularItems[item.name] = item.quantity;
+                }
+            });
+
+            // Clear cart
+            cart = [];
+            updateCartDisplay();
+            
+            // Show success message
+            const successMessage = document.getElementById('orderSuccess');
+            successMessage.classList.add('show');
+            
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+                toggleCart();
+            }, 2000);
+
+            updateAdminDashboard();
+        }
+
+        // Admin dashboard functions
+        function updateAdminDashboard() {
+            // Update stats
+            document.getElementById('totalOrders').textContent = salesData.totalOrders;
+            document.getElementById('totalItems').textContent = salesData.totalItems;
+            document.getElementById('dailySales').textContent = `${salesData.dailySales.toFixed(2)}`;
+            
+            const avgOrder = salesData.totalOrders > 0 ? salesData.dailySales / salesData.totalOrders : 0;
+            document.getElementById('avgOrder').textContent = `${avgOrder.toFixed(2)}`;
+
+            // Update orders list
+            updateOrdersList();
+            
+            // Update analytics
+            updateAnalytics();
+        }
+
+        function updateOrdersList() {
+            const ordersList = document.getElementById('ordersList');
+            
+            if (orders.length === 0) {
+                ordersList.innerHTML = `
+                    <div style="text-align: center; color: #666; padding: 50px;">
+                        <h3>No orders yet</h3>
+                        <p>Orders will appear here when customers place them</p>
+                    </div>
+                `;
+            } else {
+                ordersList.innerHTML = orders.map(order => `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-id">Order #${order.id}</div>
+                            <div class="order-timestamp">${order.timestamp.toLocaleString()}</div>
+                        </div>
+                        <div class="order-details">
+                            <ul class="order-items">
+                                ${order.items.map(item => `
+                                    <li>
+                                        <span>${item.emoji} ${item.name} x${item.quantity}</span>
+                                        <span>${(item.price * item.quantity).toFixed(2)}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                            <div class="order-total">Total: ${order.total.toFixed(2)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function updateAnalytics() {
+            const popularItems = document.getElementById('popularItems');
+            const ordersToday = document.getElementById('ordersToday');
+            const revenueToday = document.getElementById('revenueToday');
+            const bestHour = document.getElementById('bestHour');
+            const avgOrderValue = document.getElementById('avgOrderValue');
+
+            // Popular items
+            const sortedItems = Object.entries(salesData.popularItems)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+
+            if (sortedItems.length === 0) {
+                popularItems.innerHTML = `
+                    <div style="text-align: center; color: #666; padding: 20px;">
+                        No sales data yet
+                    </div>
+                `;
+            } else {
+                popularItems.innerHTML = sortedItems.map(([item, count]) => `
+                    <div class="popular-item">
+                        <span>${item}</span>
+                        <span>${count} sold</span>
+                    </div>
+                `).join('');
+            }
+
+            // Sales summary
+            ordersToday.textContent = salesData.totalOrders;
+            revenueToday.textContent = `${salesData.dailySales.toFixed(2)}`;
+            
+            // Calculate best selling hour (simplified)
+            if (orders.length > 0) {
+                const hours = orders.map(order => order.timestamp.getHours());
+                const hourCounts = {};
+                hours.forEach(hour => {
+                    hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+                });
+                const bestHourNum = Object.entries(hourCounts)
+                    .sort(([,a], [,b]) => b - a)[0][0];
+                bestHour.textContent = `${bestHourNum}:00`;
+            } else {
+                bestHour.textContent = '--:--';
+            }
+
+            const avgValue = salesData.totalOrders > 0 ? salesData.dailySales / salesData.totalOrders : 0;
+            avgOrderValue.textContent = `${avgValue.toFixed(2)}`;
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartDisplay();
+            updateAdminDashboard();
+        });
+
+        // Close cart when clicking outside
+        window.addEventListener('click', function(event) {
+            const cartModal = document.getElementById('cartModal');
+            if (event.target === cartModal) {
+                cartModal.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
